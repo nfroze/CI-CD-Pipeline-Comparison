@@ -12,6 +12,8 @@ This architecture mirrors real-world scenarios where teams run multiple CI/CD to
 
 ## Architecture
 
+![Cloud Architecture](screenshots/cloud-architecture.png)
+
 The system runs on AWS with two EC2 instances in a public subnet:
 
 - **Jenkins Server** (port 8080): Hosts the Jenkins controller, pulls from GitHub, and executes pipeline stages directly on the instance. Deploys via SSH to the application server.
