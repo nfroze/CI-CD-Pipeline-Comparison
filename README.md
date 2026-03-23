@@ -1,58 +1,54 @@
-# CI/CD Pipeline Comparison: Jenkins vs GitLab CI
+# CI CD Pipeline Comparison
 
-A side-by-side implementation of two industry-standard CI/CD platforms deploying applications to shared infrastructure, demonstrating how pipeline tools differ in configuration, execution, and deployment patterns.
+A side-by-side comparison of Jenkins and GitLab CI deploying real applications to the same AWS infrastructure, demonstrating how different CI/CD tools solve the same problem with different trade-offs.
 
 ## Overview
 
-Organisations evaluating CI/CD tooling need to understand the practical differences between platforms—not just feature lists, but how pipelines are actually written and executed. This project implements identical deployment workflows in both Jenkins and GitLab CI, targeting the same application server to enable direct comparison.
+Most teams inherit their CI/CD tooling rather than choosing it deliberately. This project runs Jenkins and GitLab CI in parallel against the same AWS environment to compare their approaches to building, testing, and deploying applications. Jenkins deploys a Python Flask app while GitLab CI deploys a Node.js Express app — both targeting the same EC2 application server via SSH.
 
-The infrastructure consists of a Jenkins server and a shared application server, both provisioned with Terraform in a custom VPC. Jenkins deploys a Python Flask application via SSH/SCP using a declarative Jenkinsfile, while GitLab CI deploys a Node.js Express application using containerised pipeline stages with Docker-based runners. Both pipelines follow the same build → test → deploy pattern but demonstrate platform-specific approaches to secrets management, agent configuration, and deployment execution.
-
-This architecture mirrors real-world scenarios where teams run multiple CI/CD tools during migrations or use different platforms for different application types.
+The entire infrastructure is provisioned with Terraform: a VPC with a public subnet, two EC2 instances (one for Jenkins, one as the shared application server), and security groups scoped to each role. This mirrors a real scenario where a team evaluates CI/CD platforms before committing to one, using identical infrastructure to ensure a fair comparison.
 
 ## Architecture
 
-![Cloud Architecture](screenshots/cloud-architecture.png)
+![](screenshots/cloud-architecture.png)
 
-The system runs on AWS with two EC2 instances in a public subnet:
+GitHub hosts the source repository. Jenkins runs on a dedicated EC2 instance, pulls code via git checkout, and deploys the Python app to the application server over SSH using SCP. GitLab CI runs on GitLab's SaaS runners, builds the Node.js app, and deploys to the same application server using the same SSH/SCP mechanism.
 
-- **Jenkins Server** (port 8080): Hosts the Jenkins controller, pulls from GitHub, and executes pipeline stages directly on the instance. Deploys via SSH to the application server.
-- **Application Server** (ports 3000, 5000): Receives deployments from both pipelines. Runs the Flask app on port 5000 and the Node.js app on port 3000.
-
-GitLab CI runs externally on GitLab.com, using Docker containers for each pipeline stage. The deploy stage installs an SSH agent, injects credentials from GitLab CI/CD variables, and deploys to the same application server.
-
-Security groups enforce network boundaries: the Jenkins server only exposes SSH and port 8080, while the application server exposes SSH and the two application ports.
+Both pipelines follow the same pattern — build, test, deploy — but Jenkins requires its own server to manage while GitLab CI runs externally with no infrastructure to maintain. The application server exposes both apps on separate ports (3000 for Node.js, 5000 for Python), with security groups restricting access appropriately.
 
 ## Tech Stack
 
-**Infrastructure**: AWS EC2, VPC, Terraform  
-**CI/CD**: Jenkins (Declarative Pipeline), GitLab CI  
-**Applications**: Python Flask, Node.js Express  
-**Deployment**: SSH, SCP, nohup process management
+**Infrastructure**: AWS VPC, EC2 (t2.micro), Internet Gateway, Security Groups, Terraform
+
+**CI/CD**: Jenkins (self-hosted on EC2), GitLab CI (SaaS runners)
+
+**Application**: Node.js/Express (port 3000), Python/Flask (port 5000)
+
+**Deployment**: SSH/SCP to EC2
 
 ## Key Decisions
 
-- **Shared application server for both pipelines**: Demonstrates that different CI/CD tools can target the same infrastructure, which is common during platform migrations or in polyglot environments.
+- **Two different applications instead of one**: Deploying a Node.js app via GitLab and a Python app via Jenkins avoids artificial duplication and shows each tool handling a realistic, distinct workload.
 
-- **Declarative Jenkinsfile over scripted pipeline**: The declarative syntax provides clearer stage definitions and is the recommended approach for new Jenkins implementations, making the pipeline more maintainable.
+- **Self-hosted Jenkins vs. SaaS GitLab CI**: This is the core comparison — Jenkins requires provisioning and maintaining an EC2 instance, while GitLab CI uses managed runners. The infrastructure cost and operational overhead difference is immediately visible in the Terraform config.
 
-- **SSH-based deployment over containerised deployment**: Both pipelines use SCP and SSH for deployment rather than container orchestration, reflecting common patterns in organisations that haven't yet adopted Kubernetes.
+- **Shared application server**: Both pipelines deploy to the same EC2 instance rather than separate targets. This isolates the comparison to the CI/CD layer and keeps infrastructure costs minimal.
 
-- **Terraform-managed infrastructure**: All AWS resources are codified, enabling reproducible environments and demonstrating infrastructure-as-code practices alongside CI/CD implementation.
+- **SSH/SCP deployment over containers**: Using direct SSH deployment keeps the focus on comparing the pipelines themselves rather than introducing container orchestration complexity.
 
 ## Screenshots
 
-![Jenkins pipeline](screenshots/jenkins.png)
+![](screenshots/aws-ec2.png)
 
-![GitLab pipeline](screenshots/gitlab.png)
+![](screenshots/git-pull.png)
 
-![Jenkins deployment](screenshots/python-app.png)
+![](screenshots/gitlab.png)
 
-![GitLab deployment](screenshots/node-app.png)
+![](screenshots/jenkins.png)
 
-![GitHub PR history](screenshots/git-pull.png)
+![](screenshots/node-app.png)
 
-![AWS console](screenshots/aws-ec2.png)
+![](screenshots/python-app.png)
 
 ## Author
 
