@@ -38,15 +38,27 @@ Both pipelines follow the same pattern — build, test, deploy — but Jenkins r
 
 ## Screenshots
 
+**AWS EC2 Instances Dashboard** — The AWS console displaying both EC2 instances provisioned by Terraform: the Jenkins server instance and the shared application server. Security groups and instance details are visible, showing the infrastructure setup that both CI/CD pipelines target for deployment.
+
 ![](screenshots/aws-ec2.png)
+
+**GitHub Repository Pull Request** — A detailed pull request view on GitHub showing the commit history and build logs from a pipeline run. The PR displays multiple commits with detailed output from build stages, demonstrating the version control integration that triggers both Jenkins and GitLab CI pipelines.
 
 ![](screenshots/git-pull.png)
 
+**GitLab CI Pipeline Dashboard** — A GitLab merge request displaying the pipeline status with build stages visualized. The interface shows job stages (lint, build, deploy) for the Node.js Express application, illustrating how GitLab CI orchestrates the deployment process on SaaS runners without requiring self-managed infrastructure.
+
 ![](screenshots/gitlab.png)
+
+**Jenkins Pipeline Stages** — The Jenkins UI displaying a completed pipeline job with detailed stage visualization. Multiple build steps are shown including checkout, build, test, and deployment stages for the Python Flask application, with logs revealing each step's execution and output.
 
 ![](screenshots/jenkins.png)
 
+**Node.js Application Running on Port 3000** — The deployed Node.js Express application accessed at `18.134.245.3:3000` with the header "Node App - Deployed by GitLab". This demonstrates successful deployment via GitLab CI to the shared EC2 application server, with the application running and responding to requests on the designated port.
+
 ![](screenshots/node-app.png)
+
+**Python Flask Application Running on Port 5000** — The deployed Python Flask application accessed at `18.134.245.3:5000` with the header "Python App - Deployed by Jenkins". This demonstrates successful deployment via Jenkins to the same EC2 application server, proving both CI/CD tools can deploy different application stacks to shared infrastructure using the same SSH/SCP mechanism.
 
 ![](screenshots/python-app.png)
 
