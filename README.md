@@ -44,9 +44,9 @@ Both pipelines follow the same pattern — build, test, deploy — but Jenkins r
 
 **GitHub Repository Pull Request** — A detailed pull request view on GitHub showing the commit history and build logs from a pipeline run. The PR displays multiple commits with detailed output from build stages, demonstrating the version control integration that triggers both Jenkins and GitLab CI pipelines.
 
-![](screenshots/git-pull.png)
+![](screenshots/github-pull-request.png)
 
-**GitLab CI Pipeline Dashboard** — A GitLab merge request displaying the pipeline status with build stages visualized. The interface shows job stages (lint, build, deploy) for the Node.js Express application, illustrating how GitLab CI orchestrates the deployment process on SaaS runners without requiring self-managed infrastructure.
+**GitLab CI Pipeline Dashboard** — A GitLab merge request displaying the pipeline status with build stages visualized. The interface shows job stages (build, test, deploy) for the Node.js Express application, illustrating how GitLab CI orchestrates the deployment process on SaaS runners without requiring self-managed infrastructure.
 
 ![](screenshots/gitlab.png)
 
