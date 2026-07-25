@@ -10,8 +10,6 @@ The entire infrastructure is provisioned with Terraform: a VPC with a public sub
 
 ## Architecture
 
-![](screenshots/cloud-architecture.png)
-
 GitHub hosts the source repository. Jenkins runs on a dedicated EC2 instance, pulls code via git checkout, and deploys the Python app to the application server over SSH using SCP. GitLab CI runs on GitLab's SaaS runners, builds the Node.js app, and deploys to the same application server using the same SSH/SCP mechanism.
 
 Both pipelines follow the same pattern — build, test, deploy — but Jenkins requires its own server to manage while GitLab CI runs externally with no infrastructure to maintain. The application server exposes both apps on separate ports (3000 for Node.js, 5000 for Python), with security groups restricting access appropriately.
